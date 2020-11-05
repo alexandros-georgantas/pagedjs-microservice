@@ -28,11 +28,11 @@
   "dependencies": {
     "@coko/server": "^1.4.1",
     "@coko/service-auth": "^1.1.1",
+    "@pubsweet/logger": "^0.2.46",
     "config": "^3.3.2",
     "fs-extra": "^9.0.1",
     "multer": "^1.4.2",
     "pagedjs": "^0.1.43",
-    "pagedjs-cli": "^0.1.1",
     "winston": "2",
     "winston-daily-rotate-file": "^3.2.1"
   },

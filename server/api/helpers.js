@@ -18,12 +18,12 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
   // Accept EPUBs only
-  if (!file.originalname.match(/\.(html|HTML)$/)) {
-    req.fileValidationError = 'Only HTML files are allowed!'
+  if (!file.originalname.match(/\.(zip)$/)) {
+    req.fileValidationError = 'Only zip files are allowed!'
     return cb(null, false)
   }
   return cb(null, true)
 }
-const uploadHandler = multer({ storage, fileFilter }).single('html')
+const uploadHandler = multer({ storage, fileFilter }).single('zip')
 
 module.exports = { uploadHandler }
