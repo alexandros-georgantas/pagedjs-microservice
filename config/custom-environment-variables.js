@@ -9,5 +9,6 @@ module.exports = {
       port: 'POSTGRES_PORT',
     },
     port: 'SERVER_PORT',
+    url: 'SERVER_URL',
   },
 }

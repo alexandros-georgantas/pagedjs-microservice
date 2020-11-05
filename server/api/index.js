@@ -1,3 +1,3 @@
-const htmlToPDF = require('./pdf.controller')
+const pagedjsController = require('./pagedjs.controller')
 
-module.exports = htmlToPDF
+module.exports = pagedjsController

@@ -1,8 +1,10 @@
+const express = require('express')
 const logger = require('@pubsweet/logger')
 const fs = require('fs-extra')
 const path = require('path')
 const { authenticate } = require('@coko/service-auth')
 const crypto = require('crypto')
+const config = require('config')
 
 const { exec } = require('child_process')
 const { uploadHandler } = require('./helpers')
@@ -13,7 +15,7 @@ const conversionHandler = async (req, res) => {
       return res.status(400).json({ msg: req.fileValidationError })
     }
     if (!req.file) {
-      return res.status(400).json({ msg: 'HTML file is not included' })
+      return res.status(400).json({ msg: 'zip file is not included' })
     }
     const { path: filePath } = req.file
     const id = crypto.randomBytes(16).toString('hex')
@@ -65,8 +67,55 @@ const conversionHandler = async (req, res) => {
   }
 }
 
+const previewerLinkHandler = async (req, res) => {
+  try {
+    if (req.fileValidationError) {
+      return res.status(400).json({ msg: req.fileValidationError })
+    }
+    if (!req.file) {
+      return res.status(400).json({ msg: 'zip file is not included' })
+    }
+    const { path: filePath } = req.file
+    const id = crypto.randomBytes(16).toString('hex')
+    const url = config.get('pubsweet-server.url')
+
+    await new Promise((resolve, reject) => {
+      exec(
+        `unzip ${filePath} -d ${path.join(__dirname, '..', 'static', id)}`,
+        (error, stdout, stderr) => {
+          if (error) {
+            return reject(error)
+          }
+          return resolve(stdout || stderr)
+        },
+      )
+    })
+    let cssFile
+    fs.readdirSync(`${path.join(__dirname, '..', 'static', id)}`).forEach(
+      file => {
+        const deconstruct = file.split('.')
+        if (deconstruct[1] === 'css') {
+          cssFile = file
+        }
+      },
+    )
+    return res.status(200).json({
+      link: `${url}/previewer/index.html?url=${id}/index.html&stylesheet=${id}/${cssFile}`,
+    })
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
 const htmlToPDFBackend = app => {
   app.post('/api/htmlToPDF', authenticate, uploadHandler, conversionHandler)
+  app.post(
+    '/api/getPreviewerLink',
+    authenticate,
+    uploadHandler,
+    previewerLinkHandler,
+  )
+  app.use('/previewer', express.static(path.join(__dirname, '..', 'static')))
 }
 
 module.exports = htmlToPDFBackend

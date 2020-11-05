@@ -8,8 +8,6 @@ services:
       context: .
       dockerfile: ./Dockerfile
     restart: always
-    security_opt:
-      - seccomp:seccomp.json
     ports: 
       - ${SERVER_PORT:-3000}:3000
     environment:
@@ -20,6 +18,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB:-pagedjs_dev_db}
       - POSTGRES_PORT=5432
       - SERVER_PORT=3000
+      - SERVER_URL=${SERVER_URL:-localhost}
       - NODE_ENV=${NODE_ENV:-development}
       - WAIT_SERVICE_PORT=db:5432
   db:

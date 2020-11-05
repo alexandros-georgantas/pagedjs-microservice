@@ -1,5 +1,5 @@
-const htmlToPDFEndpoint = require('./api')
+const pagedJSEndpoint = require('./api')
 
 module.exports = {
-  server: () => app => htmlToPDFEndpoint(app),
+  server: () => app => pagedJSEndpoint(app),
 }
