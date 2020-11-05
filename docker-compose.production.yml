@@ -1,0 +1,20 @@
+version: '2'
+
+services:
+  epub-checker:
+    build: 
+      context: .
+      dockerfile: ./Dockerfile
+    restart: always
+    ports: 
+      - ${SERVER_PORT:-3050}:3000
+    environment:
+      - PUBSWEET_SECRET=${PUBSWEET_SECRET:-dev_secret}
+      - POSTGRES_USER=${POSTGRES_USER:-pagedjs_user_dev}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secretpassword}
+      - POSTGRES_HOST=${POSTGRES_HOST:-localhost}
+      - POSTGRES_DB=${POSTGRES_DB:-pagedjs_dev_db}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+      - SERVER_PORT=3000
+      - NODE_ENV=${NODE_ENV:-production}
+      - WAIT_SERVICE_PORT=${POSTGRES_HOST:-localhost}:${POSTGRES_PORT:-5432}

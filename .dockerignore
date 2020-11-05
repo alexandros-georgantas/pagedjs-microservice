@@ -1,0 +1,10 @@
+database
+temp
+.*
+config/*.env
+*.config.*
+docker-compose.yml
+docker-compose.*.yml
+Dockerfile
+*.log
+node_modules
