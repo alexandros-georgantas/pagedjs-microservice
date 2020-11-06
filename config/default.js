@@ -25,5 +25,8 @@ module.exports = {
     port: 3000,
     useGraphQLServer: false,
     pool: { min: 0, max: 10, idleTimeoutMillis: 1000 },
+    cron: {
+      path: path.join(__dirname, '..', 'server', 'services', 'cleanup.cron.js'),
+    },
   },
 }

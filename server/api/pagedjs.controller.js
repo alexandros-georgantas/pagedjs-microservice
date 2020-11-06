@@ -1,5 +1,5 @@
 const express = require('express')
-const logger = require('@pubsweet/logger')
+const { logger } = require('@coko/server')
 const fs = require('fs-extra')
 const path = require('path')
 const { authenticate } = require('@coko/service-auth')
@@ -76,7 +76,7 @@ const previewerLinkHandler = async (req, res) => {
       return res.status(400).json({ msg: 'zip file is not included' })
     }
     const { path: filePath } = req.file
-    const id = crypto.randomBytes(16).toString('hex')
+    const id = new Date().getTime() // this is the current timestamp, this is due to cron clean up purposes
     const url = config.get('pubsweet-server.url')
 
     await new Promise((resolve, reject) => {
