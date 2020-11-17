@@ -4,11 +4,10 @@ services:
   server:
     depends_on:
       - db
-    build: 
+    build:
       context: .
-      dockerfile: ./Dockerfile
-    restart: always
-    ports: 
+      dockerfile: ./Dockerfile.development
+    ports:
       - ${SERVER_PORT:-3000}:3000
     environment:
       - PUBSWEET_SECRET=${PUBSWEET_SECRET:-dev_secret}
@@ -21,15 +20,39 @@ services:
       - SERVER_URL=${SERVER_URL:-localhost}
       - NODE_ENV=${NODE_ENV:-development}
       - WAIT_SERVICE_PORT=db:5432
+    security_opt:
+      - seccomp:unconfined
+    # security_opt:
+    #   - seccomp:seccomp.json
+    entrypoint:
+      [
+        'sh',
+        'scripts/wait-for-it.sh',
+        'db:5432',
+        '--',
+        'sh',
+        'scripts/setupDevServer.sh',
+      ]
+    command:
+      [
+        'node_modules/.bin/nodemon',
+        './server/startServer.js',
+        '--watch',
+        'server',
+        '--watch',
+        'config',
+        '--ext',
+        'js,graphql',
+      ]
+    volumes:
+      - ./server:/home/node/pagedjs/server
+      - ./config:/home/node/pagedjs/config
+
   db:
-    image: postgres:10-alpine
-    restart: always
+    image: postgres:12-alpine
     ports:
       - ${POSTGRES_PORT:-5432}:5432
     environment:
       - POSTGRES_USER
       - POSTGRES_DB
       - POSTGRES_PASSWORD
-      - POSTGRES_PORT
-    # volumes:
-    #   - ./database/data:/var/lib/postgresql/data

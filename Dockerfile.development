@@ -1,0 +1,38 @@
+FROM node:12-alpine
+
+# Configuration for GS4JS
+ENV GS4JS_HOME=/usr/lib
+
+RUN apk update && apk add --no-cache unzip ghostscript ghostscript-dev make gcc g++ chromium \
+    nss \
+    freetype \
+    freetype-dev \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont 
+
+ENV PYTHONUNBUFFERED=1
+RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
+RUN python3 -m ensurepip
+RUN pip3 install --no-cache --upgrade pip setuptools
+
+# Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+RUN mkdir -p /home/node/Downloads
+
+WORKDIR /home/node/pagedjs
+
+RUN chown -R node:node /home/node/pagedjs
+
+USER node
+
+COPY --chown=node:node package.json ./package.json
+COPY --chown=node:node yarn.lock ./yarn.lock
+
+RUN yarn
+
+COPY --chown=node:node . .
+
+RUN chmod +x ./scripts/wait-for-it.sh

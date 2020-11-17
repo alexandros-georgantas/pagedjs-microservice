@@ -21,11 +21,11 @@ const conversionHandler = async (req, res) => {
     const id = crypto.randomBytes(16).toString('hex')
     const outputFile = `temp/${id}/output.pdf`
 
-    const pagedCLI = path.join(
-      `${process.cwd()}/`,
-      '..',
-      'pagedjs-cli/bin/paged -i',
-    )
+    // const pagedCLI = path.join(
+    //   `${process.cwd()}/`,
+    //   '..',
+    //   'pagedjs-cli/bin/paged -i',
+    // )
     logger.info(`unzipping file in temp/${id}`)
     await new Promise((resolve, reject) => {
       exec(`unzip ${filePath} -d temp/${id}`, (error, stdout, stderr) => {
@@ -40,11 +40,12 @@ const conversionHandler = async (req, res) => {
     logger.info(`creating pdf`)
     await new Promise((resolve, reject) => {
       exec(
-        `${pagedCLI} temp/${id}/index.html -o ${outputFile}`,
+        `/home/node/pagedjs/node_modules/.bin/pagedjs-cli -i temp/${id}/index.html -o ${outputFile}`,
         (error, stdout, stderr) => {
           if (error) {
             return reject(error)
           }
+          console.log('here', stdout, stderr)
           return resolve(stdout || stderr)
         },
       )
@@ -61,7 +62,7 @@ const conversionHandler = async (req, res) => {
       logger.info(`removing folder temp/${id}`)
       await fs.remove(`temp/${id}`)
     })
-    return fs.createReadStream(outputFile).pipe(res)
+    fs.createReadStream(outputFile).pipe(res)
   } catch (e) {
     throw new Error(e)
   }
@@ -78,10 +79,9 @@ const previewerLinkHandler = async (req, res) => {
     const { path: filePath } = req.file
     const id = new Date().getTime() // this is the current timestamp, this is due to cron clean up purposes
     const url = config.get('pubsweet-server.url')
-
     await new Promise((resolve, reject) => {
       exec(
-        `unzip ${filePath} -d ${path.join(__dirname, '..', 'static', id)}`,
+        `unzip ${filePath} -d ${path.join(__dirname, '..', 'static', `${id}`)}`,
         (error, stdout, stderr) => {
           if (error) {
             return reject(error)
@@ -90,8 +90,9 @@ const previewerLinkHandler = async (req, res) => {
         },
       )
     })
+
     let cssFile
-    fs.readdirSync(`${path.join(__dirname, '..', 'static', id)}`).forEach(
+    fs.readdirSync(`${path.join(__dirname, '..', 'static', `${id}`)}`).forEach(
       file => {
         const deconstruct = file.split('.')
         if (deconstruct[1] === 'css') {
@@ -99,7 +100,7 @@ const previewerLinkHandler = async (req, res) => {
         }
       },
     )
-    return res.status(200).json({
+    res.status(200).json({
       link: `${url}/previewer/index.html?url=${id}/index.html&stylesheet=${id}/${cssFile}`,
     })
   } catch (e) {
