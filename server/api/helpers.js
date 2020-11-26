@@ -26,4 +26,9 @@ const fileFilter = (req, file, cb) => {
 }
 const uploadHandler = multer({ storage, fileFilter }).single('zip')
 
-module.exports = { uploadHandler }
+const removeFrameGuard = (req, res, next) => {
+  res.removeHeader('X-Frame-Options')
+  next()
+}
+
+module.exports = { uploadHandler, removeFrameGuard }

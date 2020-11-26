@@ -8,4 +8,5 @@ docker-compose.yml
 docker-compose.*.yml
 Dockerfile
 logs
+server/static
 *.log

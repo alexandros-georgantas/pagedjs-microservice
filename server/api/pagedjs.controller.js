@@ -7,7 +7,7 @@ const crypto = require('crypto')
 const config = require('config')
 
 const { exec } = require('child_process')
-const { uploadHandler } = require('./helpers')
+const { uploadHandler, removeFrameGuard } = require('./helpers')
 
 const conversionHandler = async (req, res) => {
   try {
@@ -116,7 +116,11 @@ const htmlToPDFBackend = app => {
     uploadHandler,
     previewerLinkHandler,
   )
-  app.use('/previewer', express.static(path.join(__dirname, '..', 'static')))
+  app.use(
+    '/previewer',
+    removeFrameGuard,
+    express.static(path.join(__dirname, '..', 'static')),
+  )
 }
 
 module.exports = htmlToPDFBackend
