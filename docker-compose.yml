@@ -6,28 +6,26 @@ services:
       - db
     build:
       context: .
-      dockerfile: ./Dockerfile.development
+      dockerfile: ./Dockerfile-development
     ports:
-      - ${SERVER_PORT:-3000}:3000
+      - ${SERVER_PORT:-3000}:${SERVER_PORT:-3000}
     environment:
       - PUBSWEET_SECRET=${PUBSWEET_SECRET:-dev_secret}
+      - SERVER_PORT=${SERVER_PORT:-3000}
+      - SERVER_HOST=${SERVER_HOST:-server}
+      - SERVER_PROTOCOL=${SERVER_PROTOCOL:-http}
+      - SERVER_URL=${SERVER_URL:-localhost}
       - POSTGRES_USER=${POSTGRES_USER:-pagedjs_user_dev}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secretpassword}
       - POSTGRES_HOST=db
       - POSTGRES_DB=${POSTGRES_DB:-pagedjs_dev_db}
       - POSTGRES_PORT=5432
-      - SERVER_PORT=3000
-      - SERVER_URL=${SERVER_URL:-localhost}
-      - NODE_ENV=${NODE_ENV:-development}
-      - WAIT_SERVICE_PORT=db:5432
+      - NODE_ENV=development
     security_opt:
       - seccomp:unconfined
-    # security_opt:
-    #   - seccomp:seccomp.json
     entrypoint:
       [
-        'sh',
-        'scripts/wait-for-it.sh',
+        'node_modules/.bin/wait-for-it',
         'db:5432',
         '--',
         'sh',

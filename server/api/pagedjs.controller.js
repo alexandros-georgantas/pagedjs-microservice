@@ -21,11 +21,6 @@ const conversionHandler = async (req, res) => {
     const id = crypto.randomBytes(16).toString('hex')
     const outputFile = `temp/${id}/output.pdf`
 
-    // const pagedCLI = path.join(
-    //   `${process.cwd()}/`,
-    //   '..',
-    //   'pagedjs-cli/bin/paged -i',
-    // )
     logger.info(`unzipping file in temp/${id}`)
     await new Promise((resolve, reject) => {
       exec(`unzip ${filePath} -d temp/${id}`, (error, stdout, stderr) => {
@@ -45,7 +40,6 @@ const conversionHandler = async (req, res) => {
           if (error) {
             return reject(error)
           }
-          console.log('here', stdout, stderr)
           return resolve(stdout || stderr)
         },
       )
