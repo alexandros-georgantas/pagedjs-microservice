@@ -11,6 +11,5 @@ module.exports = {
     host: 'SERVER_HOST',
     port: 'SERVER_PORT',
     protocol: 'SERVER_PROTOCOL',
-    url: 'SERVER_URL',
   },
 }

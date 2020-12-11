@@ -14,7 +14,6 @@ services:
       - SERVER_PORT=${SERVER_PORT:-3000}
       - SERVER_HOST=${SERVER_HOST:-server}
       - SERVER_PROTOCOL=${SERVER_PROTOCOL:-http}
-      - SERVER_URL=${SERVER_URL:-localhost}
       - POSTGRES_USER=${POSTGRES_USER:-pagedjs_user_dev}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secretpassword}
       - POSTGRES_HOST=db

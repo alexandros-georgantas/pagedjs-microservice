@@ -72,7 +72,8 @@ const previewerLinkHandler = async (req, res) => {
     }
     const { path: filePath } = req.file
     const id = new Date().getTime() // this is the current timestamp, this is due to cron clean up purposes
-    const url = config.get('pubsweet-server.url')
+    const { protocol, host, port } = config.get('pubsweet-server')
+    const serverUrl = `${protocol}://${host}${port ? `:${port}` : ''}`
     await new Promise((resolve, reject) => {
       exec(
         `unzip ${filePath} -d ${path.join(__dirname, '..', 'static', `${id}`)}`,
@@ -95,7 +96,7 @@ const previewerLinkHandler = async (req, res) => {
       },
     )
     res.status(200).json({
-      link: `${url}/previewer/index.html?url=${id}/index.html&stylesheet=${id}/${cssFile}`,
+      link: `${serverUrl}/previewer/index.html?url=${id}/index.html&stylesheet=${id}/${cssFile}`,
     })
   } catch (e) {
     throw new Error(e)
