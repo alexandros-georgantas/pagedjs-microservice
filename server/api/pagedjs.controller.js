@@ -20,7 +20,8 @@ const conversionHandler = async (req, res) => {
     const { path: filePath } = req.file
     const id = crypto.randomBytes(16).toString('hex')
     const outputFile = `temp/${id}/output.pdf`
-
+    const out = `temp/${id}`
+    fs.ensureDir(out)
     logger.info(`unzipping file in temp/${id}`)
     await new Promise((resolve, reject) => {
       exec(`unzip ${filePath} -d temp/${id}`, (error, stdout, stderr) => {
@@ -74,6 +75,8 @@ const previewerLinkHandler = async (req, res) => {
     const id = new Date().getTime() // this is the current timestamp, this is due to cron clean up purposes
     const { protocol, host, port } = config.get('pubsweet-server')
     const serverUrl = `${protocol}://${host}${port ? `:${port}` : ''}`
+    const out = `${path.join(__dirname, '..', 'static', `${id}`)}`
+    fs.ensureDir(out)
     await new Promise((resolve, reject) => {
       exec(
         `unzip ${filePath} -d ${path.join(__dirname, '..', 'static', `${id}`)}`,
