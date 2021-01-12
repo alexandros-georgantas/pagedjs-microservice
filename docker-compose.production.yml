@@ -7,6 +7,8 @@ services:
       dockerfile: ./Dockerfile-production
     ports:
       - ${SERVER_PORT:-3000}:${SERVER_PORT:-3000}
+    security_opt:
+      - seccomp:unconfined
     environment:
       - PUBSWEET_SECRET=${PUBSWEET_SECRET}
       - SERVER_PORT=${SERVER_PORT}

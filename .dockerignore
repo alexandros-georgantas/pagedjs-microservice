@@ -8,5 +8,6 @@ docker-compose.yml
 docker-compose.*.yml
 Dockerfile
 logs
-server/static
+server/static/*
+!server/static/index.html
 *.log
