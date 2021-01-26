@@ -73,8 +73,13 @@ const previewerLinkHandler = async (req, res) => {
     }
     const { path: filePath } = req.file
     const id = new Date().getTime() // this is the current timestamp, this is due to cron clean up purposes
-    const { protocol, host, port } = config.get('pubsweet-server')
-    const serverUrl = `${protocol}://${host}${port ? `:${port}` : ''}`
+    const { protocol, host, port, externalURL } = config.get('pubsweet-server')
+    let serverUrl
+    if (externalURL) {
+      serverUrl = externalURL
+    } else {
+      serverUrl = `${protocol}://${host}${port ? `:${port}` : ''}`
+    }
     const out = `${path.join(__dirname, '..', 'static', `${id}`)}`
     fs.ensureDir(out)
     await new Promise((resolve, reject) => {

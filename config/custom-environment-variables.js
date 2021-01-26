@@ -10,6 +10,7 @@ module.exports = {
     },
     host: 'SERVER_HOST',
     port: 'SERVER_PORT',
+    externalURL: 'EXTERNAL_URL',
     protocol: 'SERVER_PROTOCOL',
   },
 }

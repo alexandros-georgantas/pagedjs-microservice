@@ -19,4 +19,5 @@ services:
       - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_PORT=${POSTGRES_PORT}
+      - EXTERNAL_URL=${EXTERNAL_URL}
       - NODE_ENV=production
