@@ -7,7 +7,15 @@ const crypto = require('crypto')
 const config = require('config')
 
 const { exec } = require('child_process')
-const { uploadHandler, removeFrameGuard } = require('./helpers')
+const {
+  uploadHandler,
+  removeFrameGuard,
+  readFile,
+  downloadImage,
+  imageGatherer,
+  fixImagePaths,
+  writeFile,
+} = require('./helpers')
 
 const conversionHandler = async (req, res) => {
   try {
@@ -34,6 +42,18 @@ const conversionHandler = async (req, res) => {
     logger.info(`removing ${filePath}`)
     await fs.remove(filePath)
     logger.info(`creating pdf`)
+    const bookContent = await readFile(`temp/${id}/index.html`)
+    const bookImages = imageGatherer(bookContent)
+    await Promise.all(
+      bookImages.map(async image => {
+        const { url, objectKey } = image
+        return downloadImage(url, `temp/${id}/${objectKey}`)
+      }),
+    )
+
+    const fixedContent = fixImagePaths(bookContent)
+    await fs.remove(`temp/${id}/index.html`)
+    await writeFile(`temp/${id}/index.html`, fixedContent)
     await new Promise((resolve, reject) => {
       exec(
         `/home/node/pagedjs/node_modules/.bin/pagedjs-cli -i temp/${id}/index.html -o ${outputFile}`,
