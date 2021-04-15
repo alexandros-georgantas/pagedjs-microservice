@@ -53,3 +53,6 @@ services:
       - POSTGRES_USER
       - POSTGRES_DB
       - POSTGRES_PASSWORD
+    volumes:
+      - ./scripts/init-pgboss.sql:/docker-entrypoint-initdb.d/init-pgboss.sql
+  

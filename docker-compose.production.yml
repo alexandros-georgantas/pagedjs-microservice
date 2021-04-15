@@ -4,7 +4,7 @@ services:
   server:
     build:
       context: .
-      dockerfile: ./Dockerfile-production
+      dockerfile: ./Dockerfile
     ports:
       - ${SERVER_PORT:-3000}:${SERVER_PORT:-3000}
     security_opt:
