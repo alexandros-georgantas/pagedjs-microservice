@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.1.0...v1.2.0) (2021-05-31)
+
+
+### Features
+
+* **service:** support of export scripts added ([80ddb93](https://gitlab.coko.foundation/cokoapps/pagedjs/commit/80ddb9355ffb633aa1193f38482bcff9385d975e))
+
 ## 1.1.0 (2021-04-15)
 
 
