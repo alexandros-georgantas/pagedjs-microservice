@@ -14,6 +14,7 @@ services:
       - SERVER_PORT=${SERVER_PORT:-3000}
       - SERVER_HOST=${SERVER_HOST:-server}
       - SERVER_PROTOCOL=${SERVER_PROTOCOL:-http}
+      - EXTERNAL_URL=${EXTERNAL_URL:-null}
       - POSTGRES_USER=${POSTGRES_USER:-pagedjs_user_dev}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secretpassword}
       - POSTGRES_HOST=db
@@ -40,6 +41,8 @@ services:
         'config',
         '--ext',
         'js,graphql',
+        '--ignore',
+        '/static/*',
       ]
     volumes:
       - ./server:/home/node/pagedjs/server
@@ -47,12 +50,11 @@ services:
 
   db:
     image: postgres:12-alpine
-    ports:
-      - ${POSTGRES_PORT:-5432}:5432
+    # ports:
+    #   - ${POSTGRES_PORT:-5432}:5432
     environment:
       - POSTGRES_USER
       - POSTGRES_DB
       - POSTGRES_PASSWORD
     volumes:
       - ./scripts/init-pgboss.sql:/docker-entrypoint-initdb.d/init-pgboss.sql
-  
