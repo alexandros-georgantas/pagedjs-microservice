@@ -19,13 +19,15 @@ const storage = multer.diskStorage({
 })
 
 const fileFilter = (req, file, cb) => {
-  // Accept EPUBs only
+  // Accept zip only
   if (!file.originalname.match(/\.(zip)$/)) {
     req.fileValidationError = 'Only zip files are allowed!'
     return cb(null, false)
   }
+
   return cb(null, true)
 }
+
 const uploadHandler = multer({ storage, fileFilter }).single('zip')
 
 const removeFrameGuard = (req, res, next) => {
@@ -48,6 +50,7 @@ const readFile = location =>
       return resolve(data)
     })
   })
+
 const downloadImage = (url, imagePath) =>
   axios({
     url,
@@ -61,6 +64,7 @@ const downloadImage = (url, imagePath) =>
           .on('error', e => reject(e))
       }),
   )
+
 const objectKeyExtractor = url => {
   const stage1 = url.split('?')
   const stage2 = stage1[0].split('/')
@@ -68,6 +72,7 @@ const objectKeyExtractor = url => {
 
   return objectKey
 }
+
 const imageGatherer = book => {
   const images = []
 
@@ -98,6 +103,49 @@ const fixImagePaths = book => {
 
   return $.html()
 }
+
+const indexHTMLPreparation = async (assetsLocation, pdf = false) => {
+  try {
+    let stylesheet
+    const scriptsToInject = []
+    fs.readdirSync(assetsLocation).forEach(file => {
+      const deconstruct = file.split('.')
+
+      if (deconstruct[1] === 'css') {
+        stylesheet = `./${file}`
+      }
+
+      if (deconstruct[1] === 'js') {
+        scriptsToInject.push(`./${file}`)
+      }
+    })
+    const indexContent = await readFile(`${assetsLocation}/index.html`)
+    const $ = cheerio.load(indexContent)
+    $('head').append(
+      `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.0/katex.min.css" />`,
+    )
+    $('head').append(
+      `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.1/styles/default.min.css" />`,
+    )
+    $('head').append(`<link rel="stylesheet" href="${stylesheet}" />`)
+
+    if (!pdf) {
+      $('head').append(
+        `<script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"/>`,
+      )
+
+      for (let i = 0; i < scriptsToInject.length; i += 1) {
+        $('head').append(`<script src="${scriptsToInject[i]}"/>`)
+      }
+    }
+
+    await fs.remove(`${assetsLocation}/index.html`)
+    await writeFile(`${assetsLocation}/index.html`, $.html())
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
 module.exports = {
   uploadHandler,
   removeFrameGuard,
@@ -106,4 +154,5 @@ module.exports = {
   imageGatherer,
   fixImagePaths,
   writeFile,
+  indexHTMLPreparation,
 }

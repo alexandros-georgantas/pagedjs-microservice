@@ -7,6 +7,7 @@ const crypto = require('crypto')
 const config = require('config')
 
 const { exec } = require('child_process')
+
 const {
   uploadHandler,
   removeFrameGuard,
@@ -15,6 +16,7 @@ const {
   imageGatherer,
   fixImagePaths,
   writeFile,
+  indexHTMLPreparation,
 } = require('./helpers')
 
 const conversionHandler = async (req, res) => {
@@ -22,9 +24,11 @@ const conversionHandler = async (req, res) => {
     if (req.fileValidationError) {
       return res.status(400).json({ msg: req.fileValidationError })
     }
+
     if (!req.file) {
       return res.status(400).json({ msg: 'zip file is not included' })
     }
+
     const { path: filePath } = req.file
     const id = crypto.randomBytes(16).toString('hex')
     const outputFile = `temp/${id}/output.pdf`
@@ -36,11 +40,14 @@ const conversionHandler = async (req, res) => {
         if (error) {
           return reject(error)
         }
+
         return resolve(stdout || stderr)
       })
     })
+
     logger.info(`removing ${filePath}`)
     await fs.remove(filePath)
+
     logger.info(`creating pdf`)
     const bookContent = await readFile(`temp/${id}/index.html`)
     const bookImages = imageGatherer(bookContent)
@@ -54,25 +61,51 @@ const conversionHandler = async (req, res) => {
     const fixedContent = fixImagePaths(bookContent)
     await fs.remove(`temp/${id}/index.html`)
     await writeFile(`temp/${id}/index.html`, fixedContent)
+    await indexHTMLPreparation(`temp/${id}`, true)
+    let additionalScriptsParam = ''
+    fs.readdirSync(`temp/${id}`).forEach(file => {
+      const deconstruct = file.split('.')
+
+      if (deconstruct[1] === 'js') {
+        additionalScriptsParam += `--additional-script temp/${id}/${file} `
+      }
+    })
+
     await new Promise((resolve, reject) => {
-      exec(
-        `/home/node/pagedjs/node_modules/.bin/pagedjs-cli -i temp/${id}/index.html -o ${outputFile}`,
-        (error, stdout, stderr) => {
-          if (error) {
-            return reject(error)
-          }
-          return resolve(stdout || stderr)
-        },
-      )
+      if (additionalScriptsParam.length > 0) {
+        exec(
+          `/home/node/pagedjs/node_modules/.bin/pagedjs-cli -i temp/${id}/index.html ${additionalScriptsParam.trim()} -o ${outputFile}`,
+          (error, stdout, stderr) => {
+            if (error) {
+              return reject(error)
+            }
+
+            return resolve(stdout || stderr)
+          },
+        )
+      } else {
+        exec(
+          `/home/node/pagedjs/node_modules/.bin/pagedjs-cli -i temp/${id}/index.html -o ${outputFile}`,
+          (error, stdout, stderr) => {
+            if (error) {
+              return reject(error)
+            }
+
+            return resolve(stdout || stderr)
+          },
+        )
+      }
     })
 
     if (!fs.existsSync(outputFile)) {
       return res.status(500).json({ msg: 'Error, file was not created' })
     }
+
     res.writeHead(200, {
       'Content-Type': 'application/octet-stream',
       'Content-Disposition': `attachment; filename=output.pdf`,
     })
+
     res.on('finish', async () => {
       logger.info(`removing folder temp/${id}`)
       await fs.remove(`temp/${id}`)
@@ -88,18 +121,22 @@ const previewerLinkHandler = async (req, res) => {
     if (req.fileValidationError) {
       return res.status(400).json({ msg: req.fileValidationError })
     }
+
     if (!req.file) {
       return res.status(400).json({ msg: 'zip file is not included' })
     }
+
     const { path: filePath } = req.file
     const id = new Date().getTime() // this is the current timestamp, this is due to cron clean up purposes
     const { protocol, host, port, externalURL } = config.get('pubsweet-server')
     let serverUrl
+
     if (externalURL) {
       serverUrl = externalURL
     } else {
       serverUrl = `${protocol}://${host}${port ? `:${port}` : ''}`
     }
+
     const out = `${path.join(__dirname, '..', 'static', `${id}`)}`
     fs.ensureDir(out)
     await new Promise((resolve, reject) => {
@@ -109,22 +146,19 @@ const previewerLinkHandler = async (req, res) => {
           if (error) {
             return reject(error)
           }
+
           return resolve(stdout || stderr)
         },
       )
     })
 
-    let cssFile
-    fs.readdirSync(`${path.join(__dirname, '..', 'static', `${id}`)}`).forEach(
-      file => {
-        const deconstruct = file.split('.')
-        if (deconstruct[1] === 'css') {
-          cssFile = file
-        }
-      },
+    // generation of index.html
+    await indexHTMLPreparation(
+      `${path.join(__dirname, '..', 'static', `${id}`)}`,
     )
+
     res.status(200).json({
-      link: `${serverUrl}/previewer/index.html?url=${id}/index.html&stylesheet=${id}/${cssFile}`,
+      link: `${serverUrl}/previewer/${id}/index.html`,
     })
   } catch (e) {
     throw new Error(e)
