@@ -21,12 +21,22 @@ const {
 
 const conversionHandler = async (req, res) => {
   try {
+    const isPDF = true
+
     if (req.fileValidationError) {
       return res.status(400).json({ msg: req.fileValidationError })
     }
 
     if (!req.file) {
       return res.status(400).json({ msg: 'zip file is not included' })
+    }
+
+    let imagesForm
+    let onlySourceStylesheet = false
+
+    if (req.body) {
+      imagesForm = req.body.imagesForm
+      onlySourceStylesheet = req.body.onlySourceStylesheet === 'true'
     }
 
     const { path: filePath } = req.file
@@ -50,19 +60,25 @@ const conversionHandler = async (req, res) => {
 
     logger.info(`creating pdf`)
     const bookContent = await readFile(`temp/${id}/index.html`)
-    const bookImages = imageGatherer(bookContent)
-    await Promise.all(
-      bookImages.map(async image => {
-        const { url, objectKey } = image
-        return downloadImage(url, `temp/${id}/${objectKey}`)
-      }),
-    )
 
-    const fixedContent = fixImagePaths(bookContent)
-    await fs.remove(`temp/${id}/index.html`)
-    await writeFile(`temp/${id}/index.html`, fixedContent)
-    await indexHTMLPreparation(`temp/${id}`, true)
+    if (imagesForm && imagesForm !== 'base64') {
+      const bookImages = imageGatherer(bookContent)
+      await Promise.all(
+        bookImages.map(async image => {
+          const { url, objectKey } = image
+          return downloadImage(url, `temp/${id}/${objectKey}`)
+        }),
+      )
+
+      const fixedContent = fixImagePaths(bookContent)
+      await fs.remove(`temp/${id}/index.html`)
+      await writeFile(`temp/${id}/index.html`, fixedContent)
+    }
+
+    await indexHTMLPreparation(`temp/${id}`, isPDF, onlySourceStylesheet)
+
     let additionalScriptsParam = ''
+
     fs.readdirSync(`temp/${id}`).forEach(file => {
       const deconstruct = file.split('.')
 
