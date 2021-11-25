@@ -3,7 +3,7 @@ FROM node:12-alpine3.14
 # Configuration for GS4JS
 ENV GS4JS_HOME=/usr/lib
 
-RUN apk update && apk add --no-cache unzip git bash ghostscript ghostscript-dev make gcc g++ chromium \
+RUN apk update && apk add --no-cache py3-pip unzip git bash ghostscript ghostscript-dev make gcc g++ chromium \
     nss \
     freetype \
     freetype-dev \
