@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.1](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.3.0...v1.3.1) (2021-11-25)
+
+
+### Bug Fixes
+
+* **service:** added python ([d6bb3fc](https://gitlab.coko.foundation/cokoapps/pagedjs/commit/d6bb3fcc21a4b8a6118ab669b7723219e3cffd21))
+
 ## [1.3.0](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.2.0...v1.3.0) (2021-11-25)
 
 
