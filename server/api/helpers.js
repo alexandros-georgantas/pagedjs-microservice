@@ -104,7 +104,11 @@ const fixImagePaths = book => {
   return $.html()
 }
 
-const indexHTMLPreparation = async (assetsLocation, pdf = false) => {
+const indexHTMLPreparation = async (
+  assetsLocation,
+  isPDF = false,
+  onlySourceStylesheet = false,
+) => {
   try {
     let stylesheet
     const scriptsToInject = []
@@ -121,15 +125,21 @@ const indexHTMLPreparation = async (assetsLocation, pdf = false) => {
     })
     const indexContent = await readFile(`${assetsLocation}/index.html`)
     const $ = cheerio.load(indexContent)
-    $('head').append(
-      `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.0/katex.min.css" />`,
-    )
-    $('head').append(
-      `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.1/styles/default.min.css" />`,
-    )
-    $('head').append(`<link rel="stylesheet" href="${stylesheet}" />`)
 
-    if (!pdf) {
+    if (!onlySourceStylesheet) {
+      $('head').append(
+        `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.0/katex.min.css" />`,
+      )
+      $('head').append(
+        `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.1/styles/default.min.css" />`,
+      )
+    }
+
+    if (stylesheet) {
+      $('head').append(`<link rel="stylesheet" href="${stylesheet}" />`)
+    }
+
+    if (!isPDF) {
       $('head').append(
         `<script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"/>`,
       )

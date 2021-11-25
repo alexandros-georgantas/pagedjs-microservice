@@ -1,4 +1,4 @@
-FROM node:12-alpine
+FROM node:12-alpine3.14
 
 # Configuration for GS4JS
 ENV GS4JS_HOME=/usr/lib
@@ -10,11 +10,6 @@ RUN apk update && apk add --no-cache unzip git bash ghostscript ghostscript-dev 
     harfbuzz \
     ca-certificates \
     ttf-freefont 
-
-ENV PYTHONUNBUFFERED=1
-RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
-RUN python3 -m ensurepip
-RUN pip3 install --no-cache --upgrade pip setuptools
 
 # Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
@@ -33,7 +28,7 @@ COPY --chown=node:node yarn.lock ./yarn.lock
 
 RUN yarn
 
-RUN yarn add ghostscript4js@3.2.1
+RUN yarn add ghostscript4js
 
 COPY --chown=node:node . .
 
