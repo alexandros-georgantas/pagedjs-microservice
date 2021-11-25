@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.2.0...v1.3.0) (2021-11-25)
+
+
+### Features
+
+* **service:** support kotahi ([5e0dce4](https://gitlab.coko.foundation/cokoapps/pagedjs/commit/5e0dce497065971129940744378cd8ecc93d4245))
+
+
+### Bug Fixes
+
+* **service:** fixed footnotes for PDF ([945627f](https://gitlab.coko.foundation/cokoapps/pagedjs/commit/945627f73e078ad80ddac44c8623a4adab80271b))
+
 ## [1.2.0](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.1.0...v1.2.0) (2021-05-31)
 
 
