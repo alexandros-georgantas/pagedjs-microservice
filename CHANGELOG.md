@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.3.1...v1.4.0) (2021-11-30)
+
+
+### Features
+
+* **service:** info endpoint ([81760b2](https://gitlab.coko.foundation/cokoapps/pagedjs/commit/81760b25bf3b142f0563fe987b78da28cb068f72))
+
 ### [1.3.1](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.3.0...v1.3.1) (2021-11-25)
 
 
