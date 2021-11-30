@@ -181,6 +181,72 @@ const previewerLinkHandler = async (req, res) => {
   }
 }
 
+const getToolsInfo = async (req, res) => {
+  try {
+    const nodeVersion = await new Promise((resolve, reject) => {
+      exec(`node --version`, (error, stdout, stderr) => {
+        if (error) {
+          return reject(error)
+        }
+
+        return resolve(stdout.split('v')[1].trim() || stderr)
+      })
+    })
+
+    const npmVersion = await new Promise((resolve, reject) => {
+      exec(`npm --version`, (error, stdout, stderr) => {
+        if (error) {
+          return reject(error)
+        }
+
+        return resolve(stdout.trim() || stderr)
+      })
+    })
+
+    const alpineVersion = await new Promise((resolve, reject) => {
+      exec(`cat /etc/alpine-release`, (error, stdout, stderr) => {
+        if (error) {
+          return reject(error)
+        }
+
+        return resolve(stdout.trim() || stderr)
+      })
+    })
+
+    const pythonVersion = await new Promise((resolve, reject) => {
+      exec(`python3 --version`, (error, stdout, stderr) => {
+        if (error) {
+          return reject(error)
+        }
+
+        return resolve(stdout.split(' ')[1].trim() || stderr)
+      })
+    })
+
+    const chromiumVersion = await new Promise((resolve, reject) => {
+      exec(`chromium-browser --version`, (error, stdout, stderr) => {
+        if (error) {
+          return reject(error)
+        }
+
+        return resolve(stdout.split(' ')[1].trim() || stderr)
+      })
+    })
+
+    const result = {
+      alpineLinux: alpineVersion,
+      node: nodeVersion,
+      npm: npmVersion,
+      python: pythonVersion,
+      chromium: chromiumVersion,
+    }
+
+    res.status(200).json(result)
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
 const htmlToPDFBackend = app => {
   app.post('/api/htmlToPDF', authenticate, uploadHandler, conversionHandler)
   app.post(
@@ -194,6 +260,7 @@ const htmlToPDFBackend = app => {
     removeFrameGuard,
     express.static(path.join(__dirname, '..', 'static')),
   )
+  app.use('/info', authenticate, getToolsInfo)
 }
 
 module.exports = htmlToPDFBackend
