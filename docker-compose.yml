@@ -8,13 +8,12 @@ services:
       context: .
       dockerfile: ./Dockerfile-development
     ports:
-      - ${SERVER_PORT:-3000}:${SERVER_PORT:-3000}
+      - ${SERVER_PORT:-3033}:${SERVER_PORT:-3033}
     environment:
       - PUBSWEET_SECRET=${PUBSWEET_SECRET:-dev_secret}
-      - SERVER_PORT=${SERVER_PORT:-3000}
-      - SERVER_HOST=${SERVER_HOST:-server}
+      - SERVER_PORT=${SERVER_PORT:-3033}
+      - SERVER_HOST=${SERVER_HOST:-localhost}
       - SERVER_PROTOCOL=${SERVER_PROTOCOL:-http}
-      - EXTERNAL_URL=${EXTERNAL_URL:-null}
       - POSTGRES_USER=${POSTGRES_USER:-pagedjs_user_dev}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secretpassword}
       - POSTGRES_HOST=db

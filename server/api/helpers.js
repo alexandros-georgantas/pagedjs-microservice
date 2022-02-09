@@ -125,6 +125,7 @@ const indexHTMLPreparation = async (
     })
     const indexContent = await readFile(`${assetsLocation}/index.html`)
     const $ = cheerio.load(indexContent)
+    console.log('ssss', onlySourceStylesheet, typeof onlySourceStylesheet)
 
     if (!onlySourceStylesheet) {
       $('head').append(

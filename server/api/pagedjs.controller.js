@@ -58,7 +58,6 @@ const conversionHandler = async (req, res) => {
     logger.info(`removing ${filePath}`)
     await fs.remove(filePath)
 
-    logger.info(`creating pdf`)
     const bookContent = await readFile(`temp/${id}/index.html`)
 
     if (imagesForm && imagesForm !== 'base64') {
@@ -87,16 +86,22 @@ const conversionHandler = async (req, res) => {
       }
     })
 
+    logger.info(`creating pdf`)
     await new Promise((resolve, reject) => {
       if (additionalScriptsParam.length > 0) {
         exec(
           `/home/node/pagedjs/node_modules/.bin/pagedjs-cli -i temp/${id}/index.html ${additionalScriptsParam.trim()} -o ${outputFile}`,
           (error, stdout, stderr) => {
             if (error) {
+              // const err = error || stderr
               return reject(error)
             }
 
-            return resolve(stdout || stderr)
+            logger.info('case success')
+            logger.info(`stderr: ${stderr}`)
+            logger.info(`stdout: ${stdout}`)
+
+            return resolve()
           },
         )
       } else {
@@ -104,10 +109,15 @@ const conversionHandler = async (req, res) => {
           `/home/node/pagedjs/node_modules/.bin/pagedjs-cli -i temp/${id}/index.html -o ${outputFile}`,
           (error, stdout, stderr) => {
             if (error) {
+              // const err = error || stderr
               return reject(error)
             }
 
-            return resolve(stdout || stderr)
+            logger.info('case success')
+            logger.info(`stderr: ${stderr}`)
+            logger.info(`stdout: ${stdout}`)
+
+            return resolve()
           },
         )
       }
