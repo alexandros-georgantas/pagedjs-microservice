@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.2](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.4.1...v1.4.2) (2022-07-12)
+
+
+### Bug Fixes
+
+* add missing bash ([8fa6574](https://gitlab.coko.foundation/cokoapps/pagedjs/commit/8fa657424261e3a40e584a03f4ba54dba4aad042))
+
 ### [1.4.1](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.4.0...v1.4.1) (2022-07-12)
 
 ## [1.4.0](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.3.1...v1.4.0) (2021-11-30)
