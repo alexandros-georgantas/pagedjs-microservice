@@ -4,7 +4,7 @@ FROM node:16.16.0-alpine3.16
 ENV GS4JS_HOME=/usr/lib
 ENV CONNECTION_TIMEOUT=60000
 
-RUN apk update && apk add --no-cache py3-pip unzip dumb-init git ghostscript ghostscript-dev make gcc g++ chromium \
+RUN apk update && apk add --no-cache py3-pip unzip dumb-init git ghostscript ghostscript-dev make bash gcc g++ chromium \
     nss \
     freetype \
     freetype-dev \
