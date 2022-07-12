@@ -17,9 +17,12 @@ const {
   fixImagePaths,
   writeFile,
   indexHTMLPreparation,
+  findHTMLFile,
 } = require('./helpers')
 
 const conversionHandler = async (req, res) => {
+  const id = crypto.randomBytes(16).toString('hex')
+
   try {
     const isPDF = true
 
@@ -40,7 +43,6 @@ const conversionHandler = async (req, res) => {
     }
 
     const { path: filePath } = req.file
-    const id = crypto.randomBytes(16).toString('hex')
     const outputFile = `temp/${id}/output.pdf`
     const out = `temp/${id}`
     fs.ensureDir(out)
@@ -59,7 +61,13 @@ const conversionHandler = async (req, res) => {
     await fs.remove(filePath)
 
     logger.info(`creating pdf`)
-    const bookContent = await readFile(`temp/${id}/index.html`)
+    const HTMLfilename = await findHTMLFile(`temp/${id}`)
+
+    if (!fs.existsSync(`temp/${id}/${HTMLfilename}`)) {
+      return res.status(500).json({ msg: 'Error, HTML file does not exists' })
+    }
+
+    const bookContent = await readFile(`temp/${id}/${HTMLfilename}`)
 
     if (imagesForm && imagesForm !== 'base64') {
       const bookImages = imageGatherer(bookContent)
@@ -71,11 +79,16 @@ const conversionHandler = async (req, res) => {
       )
 
       const fixedContent = fixImagePaths(bookContent)
-      await fs.remove(`temp/${id}/index.html`)
-      await writeFile(`temp/${id}/index.html`, fixedContent)
+      await fs.remove(`temp/${id}/${HTMLfilename}`)
+      await writeFile(`temp/${id}/${HTMLfilename}`, fixedContent)
     }
 
-    await indexHTMLPreparation(`temp/${id}`, isPDF, onlySourceStylesheet)
+    await indexHTMLPreparation(
+      `temp/${id}`,
+      isPDF,
+      onlySourceStylesheet,
+      HTMLfilename,
+    )
 
     let additionalScriptsParam = ''
 
@@ -90,7 +103,10 @@ const conversionHandler = async (req, res) => {
     await new Promise((resolve, reject) => {
       if (additionalScriptsParam.length > 0) {
         exec(
-          `/home/node/pagedjs/node_modules/.bin/pagedjs-cli -i temp/${id}/index.html ${additionalScriptsParam.trim()} -o ${outputFile}`,
+          `/home/node/pagedjs/node_modules/.bin/pagedjs-cli -i temp/${id}/${HTMLfilename.replace(
+            /(?=[() ])/g,
+            '\\',
+          )} ${additionalScriptsParam.trim()} -o ${outputFile}`,
           (error, stdout, stderr) => {
             if (error) {
               return reject(error)
@@ -101,7 +117,10 @@ const conversionHandler = async (req, res) => {
         )
       } else {
         exec(
-          `/home/node/pagedjs/node_modules/.bin/pagedjs-cli -i temp/${id}/index.html -o ${outputFile}`,
+          `/home/node/pagedjs/node_modules/.bin/pagedjs-cli -i temp/${id}/${HTMLfilename.replace(
+            /(?=[() ])/g,
+            '\\',
+          )} -o ${outputFile}`,
           (error, stdout, stderr) => {
             if (error) {
               return reject(error)
@@ -122,13 +141,14 @@ const conversionHandler = async (req, res) => {
       'Content-Disposition': `attachment; filename=output.pdf`,
     })
 
+    return fs.createReadStream(outputFile).pipe(res)
+  } catch (e) {
+    return res.status(500).json({ msg: e.message })
+  } finally {
     res.on('finish', async () => {
       logger.info(`removing folder temp/${id}`)
       await fs.remove(`temp/${id}`)
     })
-    fs.createReadStream(outputFile).pipe(res)
-  } catch (e) {
-    throw new Error(e)
   }
 }
 
@@ -173,11 +193,11 @@ const previewerLinkHandler = async (req, res) => {
       `${path.join(__dirname, '..', 'static', `${id}`)}`,
     )
 
-    res.status(200).json({
+    return res.status(200).json({
       link: `${serverUrl}/previewer/${id}/index.html`,
     })
   } catch (e) {
-    throw new Error(e)
+    return res.status(500).json({ msg: e.message })
   }
 }
 
@@ -241,9 +261,9 @@ const getToolsInfo = async (req, res) => {
       chromium: chromiumVersion,
     }
 
-    res.status(200).json(result)
+    return res.status(200).json(result)
   } catch (e) {
-    throw new Error(e)
+    return res.status(500).json({ msg: e.message })
   }
 }
 

@@ -1,9 +1,10 @@
-FROM node:12-alpine3.14
+FROM node:16.16.0-alpine3.16
 
 # Configuration for GS4JS
 ENV GS4JS_HOME=/usr/lib
+ENV CONNECTION_TIMEOUT=60000
 
-RUN apk update && apk add --no-cache py3-pip unzip git bash ghostscript ghostscript-dev make gcc g++ chromium \
+RUN apk update && apk add --no-cache py3-pip unzip dumb-init git ghostscript ghostscript-dev make gcc g++ chromium \
     nss \
     freetype \
     freetype-dev \
@@ -32,6 +33,6 @@ RUN yarn add ghostscript4js
 
 COPY --chown=node:node . .
 
-ENTRYPOINT ["sh", "./scripts/setupProdServer.sh"]
+ENTRYPOINT ["dumb-init", "--"]
 
-CMD ["node", "./server/startServer.js"]
+CMD ["sh", "./scripts/setupProdServer.sh"]
