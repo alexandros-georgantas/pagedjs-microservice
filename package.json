@@ -26,7 +26,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@coko/server": "^1.13.0",
+    "@coko/server": "2.0.0-beta.1",
     "@coko/service-auth": "^1.1.7",
     "axios": "^0.21.1",
     "cheerio": "^1.0.0-rc.5",
@@ -35,7 +35,7 @@
     "fs-extra": "^9.0.1",
     "multer": "^1.4.2",
     "node-wait-for-it": "^0.2.0",
-    "pagedjs-cli": "0.1.6",
+    "pagedjs-cli": "0.2.1",
     "winston": "2"
   },
   "devDependencies": {

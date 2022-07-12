@@ -51,6 +51,27 @@ const readFile = location =>
     })
   })
 
+const findHTMLFile = async location => {
+  let filename
+  return new Promise((resolve, reject) =>
+    fs.readdir(path.join(process.cwd(), location), (err, files) => {
+      if (err) return reject(err)
+
+      files.forEach(file => {
+        if (path.extname(file) === '.html') {
+          if (!filename) {
+            filename = file
+          } else {
+            reject('multiple html files inside zip')
+          }
+        }
+      })
+
+      resolve(filename)
+    }),
+  )
+}
+
 const downloadImage = (url, imagePath) =>
   axios({
     url,
@@ -108,6 +129,7 @@ const indexHTMLPreparation = async (
   assetsLocation,
   isPDF = false,
   onlySourceStylesheet = false,
+  HTMLfilename = 'index.html',
 ) => {
   try {
     let stylesheet
@@ -123,7 +145,7 @@ const indexHTMLPreparation = async (
         scriptsToInject.push(`./${file}`)
       }
     })
-    const indexContent = await readFile(`${assetsLocation}/index.html`)
+    const indexContent = await readFile(`${assetsLocation}/${HTMLfilename}`)
     const $ = cheerio.load(indexContent)
 
     if (!onlySourceStylesheet) {
@@ -149,8 +171,8 @@ const indexHTMLPreparation = async (
       }
     }
 
-    await fs.remove(`${assetsLocation}/index.html`)
-    await writeFile(`${assetsLocation}/index.html`, $.html())
+    await fs.remove(`${assetsLocation}/${HTMLfilename}`)
+    await writeFile(`${assetsLocation}/${HTMLfilename}`, $.html())
   } catch (e) {
     throw new Error(e)
   }
@@ -165,4 +187,5 @@ module.exports = {
   fixImagePaths,
   writeFile,
   indexHTMLPreparation,
+  findHTMLFile,
 }

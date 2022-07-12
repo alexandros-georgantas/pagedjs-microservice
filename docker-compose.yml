@@ -25,6 +25,8 @@ services:
       - seccomp:unconfined
     entrypoint:
       [
+        'dumb-init',
+        '--',
         'node_modules/.bin/wait-for-it',
         'db:5432',
         '--',
