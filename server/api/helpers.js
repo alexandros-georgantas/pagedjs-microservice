@@ -98,10 +98,6 @@ const indexHTMLPreparation = async (
     const indexContent = await readFile(`${assetsLocation}/${HTMLfilename}`)
     const $ = cheerio.load(indexContent)
 
-    $('head').append(
-      `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.1/styles/default.min.css" />`,
-    )
-
     if (stylesheet) {
       $('head').append(`<link rel="stylesheet" href="${stylesheet}" />`)
     }
