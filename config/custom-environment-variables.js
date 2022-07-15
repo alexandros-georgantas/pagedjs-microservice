@@ -8,9 +8,7 @@ module.exports = {
       database: 'POSTGRES_DB',
       port: 'POSTGRES_PORT',
     },
-    host: 'SERVER_HOST',
     port: 'SERVER_PORT',
-    externalURL: 'EXTERNAL_URL',
-    protocol: 'SERVER_PROTOCOL',
+    publicURL: 'PUBLIC_URL',
   },
 }

@@ -12,14 +12,12 @@ services:
     environment:
       - PUBSWEET_SECRET=${PUBSWEET_SECRET:-dev_secret}
       - SERVER_PORT=${SERVER_PORT:-3000}
-      - SERVER_HOST=${SERVER_HOST:-server}
-      - SERVER_PROTOCOL=${SERVER_PROTOCOL:-http}
-      - EXTERNAL_URL=${EXTERNAL_URL:-null}
-      - POSTGRES_USER=${POSTGRES_USER:-pagedjs_user_dev}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secretpassword}
+      - POSTGRES_USER=pagedjs_user_dev
+      - POSTGRES_PASSWORD=secretpassword
       - POSTGRES_HOST=db
-      - POSTGRES_DB=${POSTGRES_DB:-pagedjs_dev_db}
+      - POSTGRES_DB=pagedjs_dev_db
       - POSTGRES_PORT=5432
+      - PUBLIC_URL=${PUBLIC_URL:-}
       - NODE_ENV=development
     security_opt:
       - seccomp:unconfined
@@ -51,12 +49,10 @@ services:
       - ./config:/home/node/pagedjs/config
 
   db:
-    image: postgres:12-alpine
-    # ports:
-    #   - ${POSTGRES_PORT:-5432}:5432
+    image: postgres:14.4-alpine
     environment:
-      - POSTGRES_USER
-      - POSTGRES_DB
-      - POSTGRES_PASSWORD
+      - POSTGRES_USER=pagedjs_user_dev
+      - POSTGRES_PASSWORD=secretpassword
+      - POSTGRES_DB=pagedjs_dev_db
     volumes:
       - ./scripts/init-pgboss.sql:/docker-entrypoint-initdb.d/init-pgboss.sql

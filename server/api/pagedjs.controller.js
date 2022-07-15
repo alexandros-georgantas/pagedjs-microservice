@@ -11,11 +11,6 @@ const { exec } = require('child_process')
 const {
   uploadHandler,
   removeFrameGuard,
-  readFile,
-  downloadImage,
-  imageGatherer,
-  fixImagePaths,
-  writeFile,
   indexHTMLPreparation,
   findHTMLFile,
 } = require('./helpers')
@@ -34,19 +29,17 @@ const conversionHandler = async (req, res) => {
       return res.status(400).json({ msg: 'zip file is not included' })
     }
 
-    let imagesForm
-    let onlySourceStylesheet = false
-
-    if (req.body) {
-      imagesForm = req.body.imagesForm
-      onlySourceStylesheet = req.body.onlySourceStylesheet === 'true'
-    }
-
     const { path: filePath } = req.file
     const outputFile = `temp/${id}/output.pdf`
+
+    fs.ensureDir('temp')
+
     const out = `temp/${id}`
+
     fs.ensureDir(out)
+
     logger.info(`unzipping file in temp/${id}`)
+
     await new Promise((resolve, reject) => {
       exec(`unzip ${filePath} -d temp/${id}`, (error, stdout, stderr) => {
         if (error) {
@@ -60,38 +53,20 @@ const conversionHandler = async (req, res) => {
     logger.info(`removing ${filePath}`)
     await fs.remove(filePath)
 
-    logger.info(`creating pdf`)
     const HTMLfilename = await findHTMLFile(`temp/${id}`)
 
     if (!fs.existsSync(`temp/${id}/${HTMLfilename}`)) {
       return res.status(500).json({ msg: 'Error, HTML file does not exists' })
     }
 
-    const bookContent = await readFile(`temp/${id}/${HTMLfilename}`)
+    logger.info(`found main HTML file with name ${HTMLfilename}`)
 
-    if (imagesForm && imagesForm !== 'base64') {
-      const bookImages = imageGatherer(bookContent)
-      await Promise.all(
-        bookImages.map(async image => {
-          const { url, objectKey } = image
-          return downloadImage(url, `temp/${id}/${objectKey}`)
-        }),
-      )
+    logger.info(`creating processed HTML file`)
 
-      const fixedContent = fixImagePaths(bookContent)
-      await fs.remove(`temp/${id}/${HTMLfilename}`)
-      await writeFile(`temp/${id}/${HTMLfilename}`, fixedContent)
-    }
-
-    await indexHTMLPreparation(
-      `temp/${id}`,
-      isPDF,
-      onlySourceStylesheet,
-      HTMLfilename,
-    )
+    await indexHTMLPreparation(`temp/${id}`, isPDF, HTMLfilename)
 
     let additionalScriptsParam = ''
-
+    logger.info(`checking for additional pagedjs scripts`)
     fs.readdirSync(`temp/${id}`).forEach(file => {
       const deconstruct = file.split('.')
 
@@ -99,7 +74,7 @@ const conversionHandler = async (req, res) => {
         additionalScriptsParam += `--additional-script temp/${id}/${file} `
       }
     })
-
+    logger.info(`triggering pagedjs-cli for the PDF creation`)
     await new Promise((resolve, reject) => {
       if (additionalScriptsParam.length > 0) {
         exec(
@@ -164,34 +139,35 @@ const previewerLinkHandler = async (req, res) => {
 
     const { path: filePath } = req.file
     const id = new Date().getTime() // this is the current timestamp, this is due to cron clean up purposes
-    const { protocol, host, port, externalURL } = config.get('pubsweet-server')
-    let serverUrl
+    const { publicURL, port } = config.get('pubsweet-server')
+    const serverUrl = publicURL || `http://localhost${port ? `:${port}` : ''}`
 
-    if (externalURL) {
-      serverUrl = externalURL
-    } else {
-      serverUrl = `${protocol}://${host}${port ? `:${port}` : ''}`
-    }
+    fs.ensureDir(`${path.join(__dirname, '..', 'static')}`)
 
     const out = `${path.join(__dirname, '..', 'static', `${id}`)}`
-    fs.ensureDir(out)
-    await new Promise((resolve, reject) => {
-      exec(
-        `unzip ${filePath} -d ${path.join(__dirname, '..', 'static', `${id}`)}`,
-        (error, stdout, stderr) => {
-          if (error) {
-            return reject(error)
-          }
 
-          return resolve(stdout || stderr)
-        },
-      )
+    fs.ensureDir(out)
+
+    await new Promise((resolve, reject) => {
+      exec(`unzip ${filePath} -d ${out}`, (error, stdout, stderr) => {
+        if (error) {
+          return reject(error)
+        }
+
+        return resolve(stdout || stderr)
+      })
     })
 
+    const HTMLfilename = await findHTMLFile(`server/static/${id}`)
+
+    if (!fs.existsSync(out)) {
+      return res.status(500).json({ msg: 'Error, HTML file does not exists' })
+    }
+
+    logger.info(`found main HTML file with name ${HTMLfilename}`)
+
     // generation of index.html
-    await indexHTMLPreparation(
-      `${path.join(__dirname, '..', 'static', `${id}`)}`,
-    )
+    await indexHTMLPreparation(out, false, HTMLfilename)
 
     return res.status(200).json({
       link: `${serverUrl}/previewer/${id}/index.html`,
@@ -253,12 +229,45 @@ const getToolsInfo = async (req, res) => {
       })
     })
 
+    const pagedjsVersion = await new Promise((resolve, reject) => {
+      exec(`npm view pagedjs version`, (error, stdout, stderr) => {
+        if (error) {
+          return reject(error)
+        }
+
+        return resolve(stdout.split('\\')[0].trim() || stderr)
+      })
+    })
+
+    const pagedjsCLIVersion = await new Promise((resolve, reject) => {
+      exec(`npm view pagedjs-cli version`, (error, stdout, stderr) => {
+        if (error) {
+          return reject(error)
+        }
+
+        return resolve(stdout.split('\\')[0].trim() || stderr)
+      })
+    })
+
+    const puppeteerVersion = await new Promise((resolve, reject) => {
+      exec(`npm view puppeteer version`, (error, stdout, stderr) => {
+        if (error) {
+          return reject(error)
+        }
+
+        return resolve(stdout.split('\\')[0].trim() || stderr)
+      })
+    })
+
     const result = {
       alpineLinux: alpineVersion,
       node: nodeVersion,
       npm: npmVersion,
       python: pythonVersion,
       chromium: chromiumVersion,
+      pagedjs: pagedjsVersion,
+      'pagedjs-cli': pagedjsCLIVersion,
+      puppeteer: puppeteerVersion,
     }
 
     return res.status(200).json(result)

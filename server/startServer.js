@@ -1,3 +1,11 @@
 const { startServer } = require('@coko/server')
 
-startServer()
+const init = async () => {
+  try {
+    return startServer()
+  } catch (e) {
+    throw new Error(e.message)
+  }
+}
+
+init()

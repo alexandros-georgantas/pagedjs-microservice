@@ -11,6 +11,7 @@ cron.schedule('5 8 * * Sun', async () => {
         if (err) {
           throw new Error(err)
         }
+
         await Promise.all(
           files.map(async file => {
             if (
@@ -22,6 +23,7 @@ cron.schedule('5 8 * * Sun', async () => {
             ) {
               const EIGHTHOURS = 1000 * 60 * 60 * 8
               const eightHoursAgo = new Date().getTime() - EIGHTHOURS
+
               if (file <= eightHoursAgo) {
                 await fs.remove(path.join(__dirname, '..', 'static', file))
               }

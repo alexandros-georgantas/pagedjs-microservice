@@ -1,7 +1,6 @@
 const multer = require('multer')
 const path = require('path')
 const fs = require('fs-extra')
-const axios = require('axios')
 const cheerio = require('cheerio')
 
 const storage = multer.diskStorage({
@@ -53,8 +52,11 @@ const readFile = location =>
 
 const findHTMLFile = async location => {
   let filename
+  const projectRootFolder = path.join(__dirname, '..', '..')
+  const unzippedRootFolder = path.join(projectRootFolder, location)
+
   return new Promise((resolve, reject) =>
-    fs.readdir(path.join(process.cwd(), location), (err, files) => {
+    fs.readdir(unzippedRootFolder, (err, files) => {
       if (err) return reject(err)
 
       files.forEach(file => {
@@ -62,73 +64,21 @@ const findHTMLFile = async location => {
           if (!filename) {
             filename = file
           } else {
-            reject('multiple html files inside zip')
+            return reject(new Error('multiple html files inside zip'))
           }
         }
+
+        return false
       })
 
-      resolve(filename)
+      return resolve(filename)
     }),
   )
-}
-
-const downloadImage = (url, imagePath) =>
-  axios({
-    url,
-    responseType: 'stream',
-  }).then(
-    response =>
-      new Promise((resolve, reject) => {
-        response.data
-          .pipe(fs.createWriteStream(imagePath))
-          .on('finish', () => resolve())
-          .on('error', e => reject(e))
-      }),
-  )
-
-const objectKeyExtractor = url => {
-  const stage1 = url.split('?')
-  const stage2 = stage1[0].split('/')
-  const objectKey = stage2[stage2.length - 1]
-
-  return objectKey
-}
-
-const imageGatherer = book => {
-  const images = []
-
-  const $ = cheerio.load(book)
-
-  $('img[src]').each((index, node) => {
-    const $node = $(node)
-
-    const url = $node.attr('src')
-    images.push({
-      url,
-      objectKey: objectKeyExtractor(url),
-    })
-  })
-
-  return images
-}
-
-const fixImagePaths = book => {
-  const $ = cheerio.load(book)
-
-  $('img[src]').each((index, node) => {
-    const $node = $(node)
-
-    const url = $node.attr('src')
-    $node.attr('src', `./${objectKeyExtractor(url)}`)
-  })
-
-  return $.html()
 }
 
 const indexHTMLPreparation = async (
   assetsLocation,
   isPDF = false,
-  onlySourceStylesheet = false,
   HTMLfilename = 'index.html',
 ) => {
   try {
@@ -148,14 +98,9 @@ const indexHTMLPreparation = async (
     const indexContent = await readFile(`${assetsLocation}/${HTMLfilename}`)
     const $ = cheerio.load(indexContent)
 
-    if (!onlySourceStylesheet) {
-      $('head').append(
-        `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.0/katex.min.css" />`,
-      )
-      $('head').append(
-        `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.1/styles/default.min.css" />`,
-      )
-    }
+    $('head').append(
+      `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.1/styles/default.min.css" />`,
+    )
 
     if (stylesheet) {
       $('head').append(`<link rel="stylesheet" href="${stylesheet}" />`)
@@ -172,7 +117,10 @@ const indexHTMLPreparation = async (
     }
 
     await fs.remove(`${assetsLocation}/${HTMLfilename}`)
-    await writeFile(`${assetsLocation}/${HTMLfilename}`, $.html())
+    await writeFile(
+      `${assetsLocation}/${isPDF ? HTMLfilename : 'index.html'}`,
+      $.html(),
+    )
   } catch (e) {
     throw new Error(e)
   }
@@ -182,9 +130,6 @@ module.exports = {
   uploadHandler,
   removeFrameGuard,
   readFile,
-  downloadImage,
-  imageGatherer,
-  fixImagePaths,
   writeFile,
   indexHTMLPreparation,
   findHTMLFile,
