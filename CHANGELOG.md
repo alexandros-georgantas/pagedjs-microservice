@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.4](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.4.3...v1.4.4) (2022-07-15)
+
+
+### Bug Fixes
+
+* **service:** remove highlight css ([8eb4e74](https://gitlab.coko.foundation/cokoapps/pagedjs/commit/8eb4e74e5f2411460d77116997bfd0a7e61ed9a2))
+
 ### [1.4.3](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.4.2...v1.4.3) (2022-07-15)
 
 ### [1.4.2](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.4.1...v1.4.2) (2022-07-12)

@@ -1,6 +1,6 @@
 {
   "name": "@coko/pagedjs",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "Service that converts an HTML file into pdf, and pagedjs previewer",
   "main": "server/index.js",
   "scripts": {
