@@ -12,11 +12,11 @@ services:
     environment:
       - PUBSWEET_SECRET=${PUBSWEET_SECRET:-dev_secret}
       - SERVER_PORT=${SERVER_PORT:-3000}
-      - POSTGRES_USER=pagedjs_user_dev
-      - POSTGRES_PASSWORD=secretpassword
-      - POSTGRES_HOST=db
-      - POSTGRES_DB=pagedjs_dev_db
-      - POSTGRES_PORT=5432
+      - POSTGRES_USER=${POSTGRES_USER:-pagedjs_user_dev}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secretpassword}
+      - POSTGRES_HOST=${POSTGRES_HOST:-db}
+      - POSTGRES_DB=${POSTGRES_DB:-pagedjs_dev_db}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
       - PUBLIC_URL=${PUBLIC_URL:-}
       - NODE_ENV=development
     security_opt:
@@ -25,7 +25,8 @@ services:
       [
         'dumb-init',
         '--',
-        'node_modules/.bin/wait-for-it',
+        'sh',
+        'scripts/wait-for-it',
         'db:5432',
         '--',
         'sh',
@@ -51,8 +52,8 @@ services:
   db:
     image: postgres:14.4-alpine
     environment:
-      - POSTGRES_USER=pagedjs_user_dev
-      - POSTGRES_PASSWORD=secretpassword
-      - POSTGRES_DB=pagedjs_dev_db
+      - POSTGRES_USER=${POSTGRES_USER:-pagedjs_user_dev}
+      - POSTGRES_DB=${POSTGRES_DB:-pagedjs_dev_db}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secretpassword}
     volumes:
       - ./scripts/init-pgboss.sql:/docker-entrypoint-initdb.d/init-pgboss.sql

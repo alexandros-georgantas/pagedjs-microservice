@@ -110,7 +110,16 @@ const conversionHandler = async (req, res) => {
     if (!fs.existsSync(outputFile)) {
       return res.status(500).json({ msg: 'Error, file was not created' })
     }
+    res.on('finish', async () => {
+      logger.info(`removing folder temp/${id}`)
+      await fs.remove(`temp/${id}`)
+    })
 
+    req.on('error', async err => {
+      logger.error(err.message)
+      await fs.remove(`temp/${id}`)
+    })
+    
     res.writeHead(200, {
       'Content-Type': 'application/octet-stream',
       'Content-Disposition': `attachment; filename=output.pdf`,
@@ -119,12 +128,7 @@ const conversionHandler = async (req, res) => {
     return fs.createReadStream(outputFile).pipe(res)
   } catch (e) {
     return res.status(500).json({ msg: e.message })
-  } finally {
-    res.on('finish', async () => {
-      logger.info(`removing folder temp/${id}`)
-      await fs.remove(`temp/${id}`)
-    })
-  }
+}
 }
 
 const previewerLinkHandler = async (req, res) => {
