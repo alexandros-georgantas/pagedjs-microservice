@@ -75,6 +75,7 @@ const conversionHandler = async (req, res) => {
       }
     })
     logger.info(`triggering pagedjs-cli for the PDF creation`)
+    logger.info(additionalScriptsParam.trim())
     await new Promise((resolve, reject) => {
       if (additionalScriptsParam.length > 0) {
         exec(
@@ -112,12 +113,12 @@ const conversionHandler = async (req, res) => {
     }
     res.on('finish', async () => {
       logger.info(`removing folder temp/${id}`)
-      await fs.remove(`temp/${id}`)
+      // await fs.remove(`temp/${id}`)
     })
 
     req.on('error', async err => {
       logger.error(err.message)
-      await fs.remove(`temp/${id}`)
+      // await fs.remove(`temp/${id}`)
     })
     
     res.writeHead(200, {

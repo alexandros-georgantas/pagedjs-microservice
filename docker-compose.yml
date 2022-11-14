@@ -47,6 +47,7 @@ services:
       ]
     volumes:
       - ./server:/home/node/pagedjs/server
+      - ./temp:/home/node/pagedjs/temp
       - ./config:/home/node/pagedjs/config
 
   db:
