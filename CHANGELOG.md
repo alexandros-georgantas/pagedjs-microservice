@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.7](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.4.4...v1.4.7) (2022-11-17)
+
+
+### Bug Fixes
+
+* **service:** return to prev ver of pagedjs ([5a24c09](https://gitlab.coko.foundation/cokoapps/pagedjs/commit/5a24c09bac8ef2544f29c2a975ab91acc5327798))
+* **service:** wait script ([17df3e0](https://gitlab.coko.foundation/cokoapps/pagedjs/commit/17df3e0185c0c5c53a85e6fe953eec664c93b029))
+
 ### [1.4.4](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.4.3...v1.4.4) (2022-07-15)
 
 
