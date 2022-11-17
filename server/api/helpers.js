@@ -104,7 +104,7 @@ const indexHTMLPreparation = async (
 
     if (!isPDF) {
       $('head').append(
-        `<script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"/>`,
+        `<script src="https://unpkg.com/pagedjs@0.3.5/dist/paged.polyfill.js" />`,
       )
 
       for (let i = 0; i < scriptsToInject.length; i += 1) {
