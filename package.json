@@ -35,7 +35,7 @@
     "fs-extra": "^10.1.0",
     "multer": "^1.4.2",
     "node-wait-for-it": "^0.2.0",
-    "pagedjs-cli": "0.2.1",
+    "pagedjs-cli": "0.3.4",
     "winston": "2"
   },
   "devDependencies": {

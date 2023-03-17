@@ -4,14 +4,13 @@ FROM node:16.16.0-alpine3.16
 ENV GS4JS_HOME=/usr/lib
 ENV CONNECTION_TIMEOUT=60000
 
-RUN apk update && apk add --no-cache py3-pip unzip dumb-init git ghostscript ghostscript-dev make bash gcc g++ chromium \
+RUN apk update && apk add --no-cache bash py3-pip coreutils unzip dumb-init ghostscript git ghostscript-dev make gcc g++ chromium \
     nss \
     freetype \
     freetype-dev \
     harfbuzz \
     ca-certificates \
     ttf-freefont 
-
 # Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser

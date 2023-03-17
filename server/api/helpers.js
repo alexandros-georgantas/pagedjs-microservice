@@ -29,7 +29,7 @@ const fileFilter = (req, file, cb) => {
 
 const uploadHandler = multer({ storage, fileFilter }).single('zip')
 
-const removeFrameGuard = (req, res, next) => {
+const removeFrameGuard = (_, res, next) => {
   res.removeHeader('X-Frame-Options')
   next()
 }
@@ -104,7 +104,7 @@ const indexHTMLPreparation = async (
 
     if (!isPDF) {
       $('head').append(
-        `<script src="https://unpkg.com/pagedjs@0.3.5/dist/paged.polyfill.js" />`,
+        `<script src="https://unpkg.com/pagedjs@0.4.1/dist/paged.polyfill.js" />`,
       )
 
       for (let i = 0; i < scriptsToInject.length; i += 1) {
