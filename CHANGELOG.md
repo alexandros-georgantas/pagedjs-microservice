@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.4.7...v1.5.0) (2023-03-17)
+
+
+### Features
+
+* update pagedjs dependencies ([118d2c1](https://gitlab.coko.foundation/cokoapps/pagedjs/commit/118d2c10f13db8e48dba1fd7819933df2f645669))
+
 ### [1.4.7](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.4.4...v1.4.7) (2022-11-17)
 
 
