@@ -21,6 +21,15 @@ module.exports = {
   pubsweet: {
     components,
   },
+  teams: {
+    global: {
+      admin: {
+        displayName: 'Admin',
+        role: 'admin',
+      },
+    },
+    nonGlobal: {},
+  },
   'pubsweet-server': {
     db: {},
     logger,

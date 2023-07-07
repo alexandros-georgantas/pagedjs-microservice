@@ -1,3 +1,5 @@
-!.cz-config.js
-!.eslintrc.js
-!.prettierrc.js
+# !.cz-config.js
+# !.eslintrc.js
+# !.prettierrc.js
+node_modules/
+static/

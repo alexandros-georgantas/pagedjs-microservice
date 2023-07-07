@@ -1,5 +1,5 @@
 database
-node_moduless
+node_modules
 temp
 .*
 config/*.env
@@ -7,7 +7,9 @@ config/*.env
 docker-compose.yml
 docker-compose.*.yml
 Dockerfile
+Dockerfile-development
 logs
 server/static/*
 !server/static/index.html
+!server/static/common-stylesheets/*
 *.log
