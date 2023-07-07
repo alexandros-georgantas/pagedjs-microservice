@@ -7,6 +7,7 @@
     "cz": "git-cz",
     "migrate": "pubsweet migrate",
     "server": "pubsweet start:server",
+    "prepare": "husky install",
     "release": "standard-version",
     "create:client": "createServiceClient",
     "test": "echo \"Error: no test specified\" && exit 1"
