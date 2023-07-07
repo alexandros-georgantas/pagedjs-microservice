@@ -15,6 +15,8 @@ const {
   findHTMLFile,
 } = require('./helpers')
 
+const { pagedjsVersion } = require('./constants')
+
 const conversionHandler = async (req, res) => {
   const id = crypto.randomBytes(16).toString('hex')
 
@@ -63,7 +65,7 @@ const conversionHandler = async (req, res) => {
 
     logger.info(`creating processed HTML file`)
 
-    await indexHTMLPreparation(`temp/${id}`, isPDF, HTMLfilename)
+    await indexHTMLPreparation(`temp/${id}`, {}, isPDF, HTMLfilename)
 
     let additionalScriptsParam = ''
     logger.info(`checking for additional pagedjs scripts`)
@@ -142,6 +144,11 @@ const previewerLinkHandler = async (req, res) => {
       return res.status(400).json({ msg: 'zip file is not included' })
     }
 
+    const options = {
+      doublePageSpread: req.body.doublePageSpread || false,
+      backgroundColor: req.body.backgroundColor || '#DCDCDC',
+    }
+
     const { path: filePath } = req.file
     const id = new Date().getTime() // this is the current timestamp, this is due to cron clean up purposes
     const { publicURL, port } = config.get('pubsweet-server')
@@ -172,7 +179,7 @@ const previewerLinkHandler = async (req, res) => {
     logger.info(`found main HTML file with name ${HTMLfilename}`)
 
     // generation of index.html
-    await indexHTMLPreparation(out, false, HTMLfilename)
+    await indexHTMLPreparation(out, options, false, HTMLfilename)
 
     return res.status(200).json({
       link: `${serverUrl}/previewer/${id}/index.html`,
@@ -234,16 +241,6 @@ const getToolsInfo = async (req, res) => {
       })
     })
 
-    const pagedjsVersion = await new Promise((resolve, reject) => {
-      exec(`npm view pagedjs version`, (error, stdout, stderr) => {
-        if (error) {
-          return reject(error)
-        }
-
-        return resolve(stdout.split('\\')[0].trim() || stderr)
-      })
-    })
-
     const pagedjsCLIVersion = await new Promise((resolve, reject) => {
       exec(`npm view pagedjs-cli version`, (error, stdout, stderr) => {
         if (error) {
@@ -294,7 +291,7 @@ const htmlToPDFBackend = app => {
     removeFrameGuard,
     express.static(path.join(__dirname, '..', 'static')),
   )
-  app.use('/info', authenticate, getToolsInfo)
+  app.get('/info', authenticate, getToolsInfo)
 }
 
 module.exports = htmlToPDFBackend

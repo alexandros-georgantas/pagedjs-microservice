@@ -3,6 +3,8 @@ const path = require('path')
 const fs = require('fs-extra')
 const cheerio = require('cheerio')
 
+const { pagedjsVersion } = require('./constants')
+
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
     await fs.ensureDir('temp/')
@@ -50,6 +52,7 @@ const readFile = location =>
     })
   })
 
+/* eslint-disable */
 const findHTMLFile = async location => {
   let filename
   const projectRootFolder = path.join(__dirname, '..', '..')
@@ -64,24 +67,27 @@ const findHTMLFile = async location => {
           if (!filename) {
             filename = file
           } else {
-            return reject(new Error('multiple html files inside zip'))
+            reject(new Error('multiple html files inside zip'))
           }
         }
 
         return false
       })
 
-      return resolve(filename)
+      resolve(filename)
     }),
   )
 }
+/* eslint-enable */
 
 const indexHTMLPreparation = async (
   assetsLocation,
+  options,
   isPDF = false,
   HTMLfilename = 'index.html',
 ) => {
   try {
+    const { doublePageSpread, backgroundColor } = options
     let stylesheet
     const scriptsToInject = []
     fs.readdirSync(assetsLocation).forEach(file => {
@@ -98,13 +104,30 @@ const indexHTMLPreparation = async (
     const indexContent = await readFile(`${assetsLocation}/${HTMLfilename}`)
     const $ = cheerio.load(indexContent)
 
+    // ORDER OF THINGS MATTER??
+    if (!isPDF) {
+      $('head').append(
+        `<style>
+          :root {
+            --color-interface-background: ${backgroundColor || '#696969'};
+          }
+        </style>`,
+      )
+
+      $('head').append(
+        `<link rel="stylesheet" href="../common-stylesheets/interface-${
+          doublePageSpread ? 'double' : 'single'
+        }.css" />`,
+      )
+    }
+
     if (stylesheet) {
       $('head').append(`<link rel="stylesheet" href="${stylesheet}" />`)
     }
 
     if (!isPDF) {
       $('head').append(
-        `<script src="https://unpkg.com/pagedjs@0.4.1/dist/paged.polyfill.js" />`,
+        `<script src="https://unpkg.com/pagedjs@${pagedjsVersion}/dist/paged.polyfill.js" />`,
       )
 
       for (let i = 0; i < scriptsToInject.length; i += 1) {
