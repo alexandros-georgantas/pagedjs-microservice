@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.5.0...v1.6.0) (2023-07-07)
+
+
+### Features
+
+* **service:** interface css added for controlling page spread and bckground ([f7b63f8](https://gitlab.coko.foundation/cokoapps/pagedjs/commit/f7b63f8a557cfd6053efb74e8650f4559a615ec7))
+
 ## [1.5.0](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.4.7...v1.5.0) (2023-03-17)
 
 
