@@ -104,6 +104,13 @@ const indexHTMLPreparation = async (
     const indexContent = await readFile(`${assetsLocation}/${HTMLfilename}`)
     const $ = cheerio.load(indexContent)
 
+    if (!isPDF) {
+      $('html').each((i, elem) => {
+        const $elem = $(elem)
+        $elem.attr('id', 'pagedjs-previewer-content')
+      })
+    }
+
     // ORDER OF THINGS MATTER??
     if (!isPDF) {
       $('head').append(
