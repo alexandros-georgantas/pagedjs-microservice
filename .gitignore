@@ -13,4 +13,5 @@ temp/
 uploads/*
 .env.*
 server/static/*
-!config/static/.gitkeep
+!server/static/common-stylesheets/
+!config/.gitkeep

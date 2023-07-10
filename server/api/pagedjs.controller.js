@@ -147,6 +147,7 @@ const previewerLinkHandler = async (req, res) => {
     const options = {
       doublePageSpread: req.body.doublePageSpread || false,
       backgroundColor: req.body.backgroundColor || '#DCDCDC',
+      zoomPercentage: req.body.zoomPercentage || 1,
     }
 
     const { path: filePath } = req.file

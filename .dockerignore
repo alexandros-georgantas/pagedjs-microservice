@@ -10,6 +10,5 @@ Dockerfile
 Dockerfile-development
 logs
 server/static/*
-!server/static/index.html
-!server/static/common-stylesheets/*
+!server/static/common-stylesheets
 *.log

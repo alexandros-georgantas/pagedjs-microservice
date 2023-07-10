@@ -87,7 +87,7 @@ const indexHTMLPreparation = async (
   HTMLfilename = 'index.html',
 ) => {
   try {
-    const { doublePageSpread, backgroundColor } = options
+    const { doublePageSpread, backgroundColor, zoomPercentage } = options
     let stylesheet
     const scriptsToInject = []
     fs.readdirSync(assetsLocation).forEach(file => {
@@ -103,11 +103,13 @@ const indexHTMLPreparation = async (
     })
     const indexContent = await readFile(`${assetsLocation}/${HTMLfilename}`)
     const $ = cheerio.load(indexContent)
+    // -moz-transform: scale(0.75);-o-transform: scale(0.75);-webkit-transform: scale(0.75);
 
     if (!isPDF) {
       $('html').each((i, elem) => {
         const $elem = $(elem)
         $elem.attr('id', 'pagedjs-previewer-content')
+        $elem.attr('style', `zoom:${zoomPercentage};`)
       })
     }
 
