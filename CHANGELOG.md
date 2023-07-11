@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.4](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.6.3...v1.6.4) (2023-07-11)
+
+
+### Bug Fixes
+
+* **service:** add more rules in interface css ([fab9d8a](https://gitlab.coko.foundation/cokoapps/pagedjs/commit/fab9d8abe0b73760f58bbc96d01149dfc6cade15))
+
 ### [1.6.3](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.6.2...v1.6.3) (2023-07-11)
 
 
