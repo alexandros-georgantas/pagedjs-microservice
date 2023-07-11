@@ -19,6 +19,8 @@
 
   .pagedjs_pages {
     display: grid;
+    margin: 0 auto;
+    padding-bottom: 8px;
     grid-template-columns: 1fr 1fr;
     /* width: calc(var(--pagedjs-width) * 2); */
     width: calc(var(--pagedjs-width) * 2);

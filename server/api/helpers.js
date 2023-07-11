@@ -105,14 +105,16 @@ const indexHTMLPreparation = async (
     const $ = cheerio.load(indexContent)
 
     if (!isPDF) {
-      $('body').each((i, elem) => {
-        const $elem = $(elem)
+      if (zoomPercentage && parseFloat(zoomPercentage) < 1.0) {
+        $('body').each((i, elem) => {
+          const $elem = $(elem)
 
-        $elem.attr(
-          'style',
-          `-moz-transform: scale(${zoomPercentage});-o-transform: scale(${zoomPercentage});-webkit-transform: scale(${zoomPercentage});-moz-transform-origin: top center;-o-transform-origin: top center;-webkit-transform-origin: top center;`,
-        )
-      })
+          $elem.attr(
+            'style',
+            `-moz-transform: scale(${zoomPercentage});-o-transform: scale(${zoomPercentage});-webkit-transform: scale(${zoomPercentage});-moz-transform-origin: top center;-o-transform-origin: top center;-webkit-transform-origin: top center;`,
+          )
+        })
+      }
     }
 
     // ORDER OF THINGS MATTER??
