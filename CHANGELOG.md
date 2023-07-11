@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.3](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.6.2...v1.6.3) (2023-07-11)
+
+
+### Bug Fixes
+
+* **service:** change from zoom to scale, changes in interface css ([af638b3](https://gitlab.coko.foundation/cokoapps/pagedjs/commit/af638b386137e428918ac81a1542674588d6262f))
+
 ### [1.6.2](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.6.1...v1.6.2) (2023-07-10)
 
 
