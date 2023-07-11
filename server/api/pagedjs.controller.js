@@ -144,10 +144,24 @@ const previewerLinkHandler = async (req, res) => {
       return res.status(400).json({ msg: 'zip file is not included' })
     }
 
+    const { options: requestedOptions } = req.body
+
+    let convertedToJSONOptions
+
+    if (requestedOptions) {
+      convertedToJSONOptions = JSON.parse(req.body.options)
+    }
+
+    // {"zoomPercentage":0.6,"doublePageSpread":true, "backgroundColor":"pink"}
     const options = {
-      doublePageSpread: req.body.doublePageSpread || false,
-      backgroundColor: req.body.backgroundColor || '#DCDCDC',
-      zoomPercentage: req.body.zoomPercentage || 1,
+      doublePageSpread:
+        (convertedToJSONOptions && convertedToJSONOptions.doublePageSpread) ||
+        false,
+      backgroundColor:
+        (convertedToJSONOptions && convertedToJSONOptions.backgroundColor) ||
+        '#DCDCDC',
+      zoomPercentage:
+        (convertedToJSONOptions && convertedToJSONOptions.zoomPercentage) || 1,
     }
 
     const { path: filePath } = req.file

@@ -103,13 +103,15 @@ const indexHTMLPreparation = async (
     })
     const indexContent = await readFile(`${assetsLocation}/${HTMLfilename}`)
     const $ = cheerio.load(indexContent)
-    // -moz-transform: scale(0.75);-o-transform: scale(0.75);-webkit-transform: scale(0.75);
 
     if (!isPDF) {
-      $('html').each((i, elem) => {
+      $('body').each((i, elem) => {
         const $elem = $(elem)
-        $elem.attr('id', 'pagedjs-previewer-content')
-        $elem.attr('style', `zoom:${zoomPercentage};`)
+
+        $elem.attr(
+          'style',
+          `-moz-transform: scale(${zoomPercentage});-o-transform: scale(${zoomPercentage});-webkit-transform: scale(${zoomPercentage});-moz-transform-origin: top center;-o-transform-origin: top center;-webkit-transform-origin: top center;`,
+        )
       })
     }
 
@@ -118,7 +120,7 @@ const indexHTMLPreparation = async (
       $('head').append(
         `<style>
           :root {
-            --color-interface-background: ${backgroundColor || '#696969'};
+            --color-interface-background: ${backgroundColor};
           }
         </style>`,
       )

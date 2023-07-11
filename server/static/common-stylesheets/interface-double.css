@@ -18,11 +18,14 @@
   }
 
   .pagedjs_pages {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* width: calc(var(--pagedjs-width) * 2); */
     width: calc(var(--pagedjs-width) * 2);
-    flex: 0;
-    flex-wrap: wrap;
-    margin: 0 auto;
+    gap: 0 0;
+    /* flex: 0;
+    flex-wrap: wrap; */
+    /* margin: 0 auto; */
   }
 
   .pagedjs_page {
@@ -35,12 +38,13 @@
   }
 
   .pagedjs_first_page {
-    margin-left: var(--pagedjs-width);
+    grid-column: 2;
+    /* margin-left: var(--pagedjs-width); */
   }
 
-  .pagedjs_page:last-of-type {
+  /* .pagedjs_page:last-of-type {
     margin-bottom: 10mm;
-  }
+  } */
 
   .pagedjs_pagebox {
     box-shadow: 0 0 0 1px var(--color-interface-pageBox);
