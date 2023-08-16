@@ -88,6 +88,7 @@ const indexHTMLPreparation = async (
 ) => {
   try {
     const { doublePageSpread, backgroundColor, zoomPercentage } = options
+
     let stylesheet
     const scriptsToInject = []
     fs.readdirSync(assetsLocation).forEach(file => {
@@ -104,25 +105,17 @@ const indexHTMLPreparation = async (
     const indexContent = await readFile(`${assetsLocation}/${HTMLfilename}`)
     const $ = cheerio.load(indexContent)
 
-    if (!isPDF) {
-      if (zoomPercentage && parseFloat(zoomPercentage) < 1.0) {
-        $('body').each((i, elem) => {
-          const $elem = $(elem)
-
-          $elem.attr(
-            'style',
-            `-moz-transform: scale(${zoomPercentage});-o-transform: scale(${zoomPercentage});-webkit-transform: scale(${zoomPercentage});-moz-transform-origin: top center;-o-transform-origin: top center;-webkit-transform-origin: top center;`,
-          )
-        })
-      }
-    }
-
     // ORDER OF THINGS MATTER??
     if (!isPDF) {
       $('head').append(
         `<style>
           :root {
             --color-interface-background: ${backgroundColor};
+            ${
+              zoomPercentage
+                ? `--zoom-interface-factor:${parseFloat(zoomPercentage)}`
+                : ''
+            }
           }
         </style>`,
       )
@@ -145,6 +138,16 @@ const indexHTMLPreparation = async (
 
       for (let i = 0; i < scriptsToInject.length; i += 1) {
         $('head').append(`<script src="${scriptsToInject[i]}"/>`)
+      }
+
+      if (zoomPercentage && parseFloat(zoomPercentage) !== 1.0) {
+        $('head').append(
+          `<script>class zoomAfter extends Paged.Handler {constructor(chunker, polisher, caller) {super(chunker, polisher, caller);}afterRendered() {document.querySelector(".pagedjs_pages").style.transform = "scale(var(--zoom-interface-factor))";document.querySelector(".pagedjs_pages").style.transformOrigin = "${
+            zoomPercentage && parseFloat(zoomPercentage) > 1.0
+              ? 'top left'
+              : 'top center'
+          }";}}Paged.registerHandlers(zoomAfter);</script>`,
+        )
       }
     }
 

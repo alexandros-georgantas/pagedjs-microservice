@@ -161,7 +161,8 @@ const previewerLinkHandler = async (req, res) => {
         (convertedToJSONOptions && convertedToJSONOptions.backgroundColor) ||
         '#DCDCDC',
       zoomPercentage:
-        (convertedToJSONOptions && convertedToJSONOptions.zoomPercentage) || 1,
+        (convertedToJSONOptions && convertedToJSONOptions.zoomPercentage) ||
+        1.0,
     }
 
     const { path: filePath } = req.file

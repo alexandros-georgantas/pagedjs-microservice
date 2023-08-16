@@ -1,3 +1,3 @@
 module.exports = {
-  pagedjsVersion: '0.4.2',
+  pagedjsVersion: '0.4.3',
 }
