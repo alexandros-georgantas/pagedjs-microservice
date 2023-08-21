@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.6](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.6.4...v1.6.6) (2023-08-21)
+
+
+### Bug Fixes
+
+* **service:** added forgotten await keywords ([c883844](https://gitlab.coko.foundation/cokoapps/pagedjs/commit/c8838442bc3e4dc03fbcc7a8e9faf861548fa068))
+* **service:** fix zoom issues and update ([4f1e090](https://gitlab.coko.foundation/cokoapps/pagedjs/commit/4f1e0900f6b68e6349c055520a694216456fd6b4))
+
 ### [1.6.4](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.6.3...v1.6.4) (2023-07-11)
 
 
