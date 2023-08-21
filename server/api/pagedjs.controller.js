@@ -34,11 +34,11 @@ const conversionHandler = async (req, res) => {
     const { path: filePath } = req.file
     const outputFile = `temp/${id}/output.pdf`
 
-    fs.ensureDir('temp')
+    await fs.ensureDir('temp')
 
     const out = `temp/${id}`
 
-    fs.ensureDir(out)
+    await fs.ensureDir(out)
 
     logger.info(`unzipping file in temp/${id}`)
 
@@ -170,11 +170,11 @@ const previewerLinkHandler = async (req, res) => {
     const { publicURL, port } = config.get('pubsweet-server')
     const serverUrl = publicURL || `http://localhost${port ? `:${port}` : ''}`
 
-    fs.ensureDir(`${path.join(__dirname, '..', 'static')}`)
+    await fs.ensureDir(`${path.join(__dirname, '..', 'static')}`)
 
     const out = `${path.join(__dirname, '..', 'static', `${id}`)}`
 
-    fs.ensureDir(out)
+    await fs.ensureDir(out)
 
     await new Promise((resolve, reject) => {
       exec(`unzip ${filePath} -d ${out}`, (error, stdout, stderr) => {
