@@ -74,7 +74,7 @@ const findHTMLFile = async location => {
         return false
       })
 
-      resolve(filename)
+      return resolve(filename)
     }),
   )
 }
