@@ -8,10 +8,10 @@ services:
       context: .
       dockerfile: ./Dockerfile-development
     ports:
-      - ${SERVER_PORT:-3003}:${SERVER_PORT:-3003}
+      - ${SERVER_PORT:-3000}:${SERVER_PORT:-3000}
     environment:
       - PUBSWEET_SECRET=${PUBSWEET_SECRET:-dev_secret}
-      - SERVER_PORT=${SERVER_PORT:-3003}
+      - SERVER_PORT=${SERVER_PORT:-3000}
       - POSTGRES_USER=${POSTGRES_USER:-pagedjs_user_dev}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secretpassword}
       - POSTGRES_HOST=${POSTGRES_HOST:-db}
