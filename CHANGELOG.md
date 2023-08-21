@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.8](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.6.7...v1.6.8) (2023-08-21)
+
+
+### Bug Fixes
+
+* added missing return ([e9f2dbc](https://gitlab.coko.foundation/cokoapps/pagedjs/commit/e9f2dbc48035f6997fc90c241c3996118a11a272))
+
 ### [1.6.7](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.6.6...v1.6.7) (2023-08-21)
 
 ### [1.6.6](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.6.4...v1.6.6) (2023-08-21)
