@@ -1,9 +1,10 @@
 const { cron } = require('@coko/server')
 const fs = require('fs-extra')
 const path = require('path')
-
+// Deprecated
 // Clean-up static folder every Sunday @ 08:05 am
 // cron.schedule('5 8 * * Sun', async () => {
+
 // Clean-up static folder every 5 minutes and delete folders created 10 minutes ago
 cron.schedule('*/5 * * * *', async () => {
   try {
@@ -29,9 +30,11 @@ cron.schedule('*/5 * * * *', async () => {
               const tenMinutesAgo = new Date().getTime() - TEN_MINUTES
 
               if (file !== 'common-stylesheets' && file <= tenMinutesAgo) {
-                await fs.remove(path.join(__dirname, '..', 'static', file))
+                return fs.remove(path.join(__dirname, '..', 'static', file))
               }
             }
+
+            return false
           }),
         )
       },

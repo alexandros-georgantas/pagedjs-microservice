@@ -115,12 +115,12 @@ const conversionHandler = async (req, res) => {
 
     res.on('finish', async () => {
       logger.info(`removing folder temp/${id}`)
-      await fs.remove(`temp/${id}`)
+      return fs.remove(`temp/${id}`)
     })
 
     req.on('error', async err => {
       logger.error(err.message)
-      await fs.remove(`temp/${id}`)
+      return fs.remove(`temp/${id}`)
     })
 
     res.writeHead(200, {
@@ -152,7 +152,6 @@ const previewerLinkHandler = async (req, res) => {
       convertedToJSONOptions = JSON.parse(req.body.options)
     }
 
-    // {"zoomPercentage":0.6,"doublePageSpread":true, "backgroundColor":"pink"}
     const options = {
       doublePageSpread:
         (convertedToJSONOptions && convertedToJSONOptions.doublePageSpread) ||
@@ -166,8 +165,11 @@ const previewerLinkHandler = async (req, res) => {
     }
 
     const { path: filePath } = req.file
+
     const id = new Date().getTime() // this is the current timestamp, this is due to cron clean up purposes
+
     const { publicURL, port } = config.get('pubsweet-server')
+
     const serverUrl = publicURL || `http://localhost${port ? `:${port}` : ''}`
 
     await fs.ensureDir(`${path.join(__dirname, '..', 'static')}`)

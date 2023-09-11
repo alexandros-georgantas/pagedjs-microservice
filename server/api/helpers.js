@@ -36,7 +36,7 @@ const removeFrameGuard = (_, res, next) => {
   next()
 }
 
-const writeFile = (location, content) =>
+const writeFile = async (location, content) =>
   new Promise((resolve, reject) => {
     fs.writeFile(location, content, 'utf8', err => {
       if (err) return reject(err)
@@ -44,7 +44,7 @@ const writeFile = (location, content) =>
     })
   })
 
-const readFile = location =>
+const readFile = async location =>
   new Promise((resolve, reject) => {
     fs.readFile(location, 'utf8', (err, data) => {
       if (err) return reject(err)
@@ -91,6 +91,7 @@ const indexHTMLPreparation = async (
 
     let stylesheet
     const scriptsToInject = []
+
     fs.readdirSync(assetsLocation).forEach(file => {
       const deconstruct = file.split('.')
 
@@ -102,6 +103,7 @@ const indexHTMLPreparation = async (
         scriptsToInject.push(`./${file}`)
       }
     })
+
     const indexContent = await readFile(`${assetsLocation}/${HTMLfilename}`)
     const $ = cheerio.load(indexContent)
 
@@ -152,7 +154,8 @@ const indexHTMLPreparation = async (
     }
 
     await fs.remove(`${assetsLocation}/${HTMLfilename}`)
-    await writeFile(
+
+    return writeFile(
       `${assetsLocation}/${isPDF ? HTMLfilename : 'index.html'}`,
       $.html(),
     )
