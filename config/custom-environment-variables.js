@@ -11,4 +11,6 @@ module.exports = {
     port: 'SERVER_PORT',
     publicURL: 'PUBLIC_URL',
   },
+  clientID: 'CLIENT_ID',
+  clientSecret: 'CLIENT_SECRET',
 }

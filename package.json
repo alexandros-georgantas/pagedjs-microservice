@@ -27,8 +27,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@coko/server": "3.0.0-beta.16",
-    "@coko/service-auth": "^1.1.7",
+    "@coko/server": "^3.8.1",
+    "@coko/service-auth": "^1.2.0",
     "axios": "^1.4.0",
     "cheerio": "^1.0.0-rc.12",
     "config": "^3.3.2",

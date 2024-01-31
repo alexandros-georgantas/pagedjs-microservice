@@ -1,4 +1,4 @@
-FROM node:16.19.1-alpine3.16
+FROM node:20.0.0-alpine3.16
 
 # Configuration for GS4JS
 ENV GS4JS_HOME=/usr/lib
