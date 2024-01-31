@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.10](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.6.9...v1.6.10) (2024-01-31)
+
 ### [1.6.9](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.6.8...v1.6.9) (2023-09-11)
 
 ### [1.6.8](https://gitlab.coko.foundation/cokoapps/pagedjs/compare/v1.6.7...v1.6.8) (2023-08-21)
